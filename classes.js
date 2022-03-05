@@ -19,7 +19,7 @@ export const atan = (x, y) => {
   if (t == 0) return 0;
   return Math.PI * 2 + t;
 };
-let views = {
+const views = {
   user: {
     size: 16,
     colors: ['erase', 'red'],
@@ -90,7 +90,7 @@ let views = {
 export class User {
   constructor(canvas) {
     this.x = window.innerWidth / 2;
-    this.y = (window.innerHeight * 1.4) / 2;
+    this.y = (window.innerHeight*1.2) / 2;
     this.speed = 5;
     this.view = views.user;
     this.canvas = canvas;
@@ -154,7 +154,7 @@ export class User {
   }
 }
 export class Ball {
-  constructor(canvas, x = 200, y = 300) {
+  constructor(canvas, x, y) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.dotCanvas = new DotCanvas(canvas);

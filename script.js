@@ -82,7 +82,10 @@ class Hound extends Ball {
 }
 class Asteroid extends Ball {
   isTouchUser() {
-    if (this.x.in(user.x - 3, user.x + 20) && this.y.in(user.y - 20, user.y)) {
+    if (
+      this.x.in(user.x - 7, user.x + 7) &&
+      this.y.in(user.y - 5, user.y + 8)
+    ) {
       emit(events.touchuser);
       this.delete = true;
     }
@@ -101,23 +104,25 @@ class Asteroid extends Ball {
     if (this.out) this.delete = true;
   }
 }
-
 let balls = [];
 let fence = Array(63)
   .fill(0)
   .map((_, i) => {
     let ins = new Asteroid(
       canvas,
-      150 * Math.cos(i / 10) + innerWidth / 2,
-      150 * Math.sin(i / 10) + innerHeight / 2
+      130 * Math.cos(i / 10) + innerWidth / 2,
+      130 * Math.sin(i / 10) + innerHeight / 2
     );
     ins.speed = 0.1;
     ins.honet(innerWidth / 2, innerHeight / 2);
-
     return ins;
   });
 let a = Math.PI / 2 - 0.3;
-
+setTimeout(() => {
+  fence.forEach((f) => {
+    f.speed = -20;
+  });
+}, 40 * 1000);
 setInterval(() => {
   emit(events.tick);
   emit(events.move);
