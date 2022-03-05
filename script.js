@@ -6,10 +6,11 @@ import { User, DotCanvas, on, emit, Ball, atan } from './classes.js';
 Number.prototype.in = function (min, max) {
   return min <= this && this <= max;
 };
-let events = {
+const events = {
   drow: new Event('drow'),
   move: new Event('move'),
   touchuser: new Event('touchuser'),
+  tick: new Event('tick'),
 };
 on('drow', () => {
   ctx.fillStyle = 'black';
@@ -88,7 +89,6 @@ class Asteroid extends Ball {
   }
   honet(x, y) {
     if (this.phase === 0) {
-      this.speed = 5;
       //super.honet(innerWidth * Math.random(), y);
       super.honet(x, y);
       this.phase = 1;
@@ -101,6 +101,7 @@ class Asteroid extends Ball {
     if (this.out) this.delete = true;
   }
 }
+
 let balls = [];
 let fence = Array(63)
   .fill(0)
@@ -110,20 +111,29 @@ let fence = Array(63)
       150 * Math.cos(i / 10) + innerWidth / 2,
       150 * Math.sin(i / 10) + innerHeight / 2
     );
-    ins.speed = 0;
+    ins.speed = 0.1;
+    ins.honet(innerWidth / 2, innerHeight / 2);
+
     return ins;
   });
 let a = Math.PI / 2 - 0.3;
+
 setInterval(() => {
+  emit(events.tick);
+  emit(events.move);
+  emit(events.drow);
+}, 1000 / 20);
+
+on('tick', () => {
   a += Math.PI / 3 - 0.01;
   let ins = new Asteroid(canvas, innerWidth / 2, innerHeight / 2);
   ins.angle = a;
+  ins.speed = 5;
   balls.push(ins);
-  emit(events.move);
-  emit(events.drow);
   balls = balls.filter((ball) => !ball.delete);
-}, 1000 / 30);
+});
 
+/*
 {
   let b = 0;
   let c = 0;

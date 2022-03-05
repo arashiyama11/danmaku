@@ -1,6 +1,5 @@
 export const on = (n, fn) => document.addEventListener(n, fn);
-export const emit = (e) =>
-  document.dispatchEvent(e);
+export const emit = (e) => document.dispatchEvent(e);
 export const deleteLis = (n, fn) => document.removeEventListener(n, fn);
 export const atan = (x, y) => {
   if (x === 0 && y === 0) {
@@ -22,6 +21,28 @@ export const atan = (x, y) => {
 };
 let views = {
   user: {
+    size: 16,
+    colors: ['erase', 'red'],
+    display: [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+      [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ],
+  },
+  olduser: {
     size: 16,
     colors: ['blue', 'erase', 'red'],
     display: [
@@ -88,7 +109,7 @@ export class User {
     window.addEventListener('keyup', (e) => {
       this.key = this.key.filter((k) => k != e.key);
     });
-    this.intervalHandle = setInterval(() => {
+    on('tick', () => {
       if (this.key.length === 0) return;
       for (const k of this.key) {
         switch (k) {
@@ -118,14 +139,14 @@ export class User {
             break;
         }
       }
-    }, 1000 / 30);
+    });
   }
   drow() {
     this.dotCanvas.import(
       this.view,
       this.x - 5,
       (this.y + 5) * -1 + innerHeight,
-      5
+      1
     );
   }
   touchUser() {
@@ -150,7 +171,7 @@ export class Ball {
     this.outTime = 0;
     on('drow', d);
     on('move', this.move.bind(this));
-    setInterval(() => {
+    on('tick', () => {
       if (this.delete) return;
       this.onWall();
       this.isTouchUser();
@@ -159,7 +180,7 @@ export class Ball {
         this.x > window.innerWidth ||
         this.y < 0 ||
         this.y > window.innerHeight;
-    }, 1000 / 30);
+    });
   }
   drow() {
     if (this.delete) return;
