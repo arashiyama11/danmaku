@@ -111,6 +111,7 @@ let fence = Array(63)
       150 * Math.sin(i / 10) + innerHeight / 2
     );
     ins.speed = 0;
+    return ins;
   });
 let a = Math.PI / 2 - 0.3;
 setInterval(() => {
