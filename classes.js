@@ -1,6 +1,6 @@
 export const on = (n, fn) => document.addEventListener(n, fn);
 export const emit = (e) => document.dispatchEvent(e);
-export const deleteLis = (n, fn) => document.removeEventListener(n, fn);
+export const remove = (n, fn) => document.removeEventListener(n, fn);
 export const atan = (x, y) => {
   if (x === 0 && y === 0) {
     return 0;
@@ -87,10 +87,11 @@ const views = {
     ],
   },
 };
+
 export class User {
   constructor(canvas) {
     this.x = window.innerWidth / 2;
-    this.y = (window.innerHeight*1.2) / 2;
+    this.y = (window.innerHeight * 1.2) / 2;
     this.speed = 5;
     this.view = views.user;
     this.canvas = canvas;
@@ -139,6 +140,10 @@ export class User {
             break;
         }
       }
+      if (this.x < 0) this.x = 0;
+      if (this.x > innerWidth) this.x = innerWidth;
+      if (this.y < 0) this.y = 0;
+      if (this.y > innerHeight) this.y = innerHeight;
     });
   }
   drow() {
@@ -150,7 +155,7 @@ export class User {
     );
   }
   touchUser() {
-    //console.log('touch');
+    console.log('touch');
   }
 }
 export class Ball {
