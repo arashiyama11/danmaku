@@ -104,6 +104,21 @@ class Asteroid extends Ball {
     if (this.out) this.delete = true;
   }
 }
+class Bound extends Ball {
+  isTouchUser() {
+    if (
+      this.x.in(user.x - 7, user.x + 7) &&
+      this.y.in(user.y - 5, user.y + 8)
+    ) {
+      emit(events.touchuser);
+      this.delete = true;
+    }
+  }
+  onWall() {
+    if (this.outTime === 2) this.delete = true;
+    super.onWall();
+  }
+}
 let balls = [];
 let a = Math.PI / 2 - 0.3;
 let phase = 0;
@@ -159,23 +174,32 @@ let engins = [
       x += 10;
       ins = new Asteroid(canvas, innerWidth / 2, 0).honet(x, innerHeight);
       ins.speed = 15;
-      if(x>innerWidth*0.9){
-        x=innerWidth
-        phase=0.5
-        setTimeout(()=>{
-          phase=1
-        },800)
+      if (x > innerWidth * 0.9) {
+        x = innerWidth;
+        phase = 0.5;
+        setTimeout(() => {
+          phase = 1;
+        }, 800);
       }
     }
     if (phase === 1) {
-      ins = new Asteroid(canvas, innerWidth / 2, 0).honet(user.x-0.1, user.y);
+      ins = new Asteroid(canvas, innerWidth / 2, 0).honet(user.x - 0.1, user.y);
       ins.speed = 15;
-      setTimeout(()=>{
-        remove("tick",engins[1])
-        //on("tick",engins[1])
-      },20000)
+      setTimeout(() => {
+        remove('tick', engins[1]);
+        on('tick', engins[2]);
+      }, 20000);
     }
-  }
+  },
+  () => {
+    balls = [];
+    balls.push(
+      new Bound(canvas, innerWidth / 2, innerHeight / 2).honet(user.x, user.y)
+    );
+    setTimeout(() => {
+      remove('tick', engins[2]);
+    }, 2000);
+  },
 ];
 on('tick', engins[0]);
 
