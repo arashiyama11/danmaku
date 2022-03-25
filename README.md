@@ -1,1 +1,1 @@
-this page is published at https://jinjanow.github.io/danmaku/
+this page is published at https://arashi-yama.github.io/danmaku/
