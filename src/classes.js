@@ -64,29 +64,20 @@ const views = {
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ],
   },
-  ball: {
-    size: 16,
-    colors: ['white', 'erase'],
-    display: [
-      [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ],
-  },
 };
+
+const numViews = [
+  '{"size":5,"colors":["white","erase"],"display":[[0,0,0,0,0],[0,1,1,1,0],[0,0,0,0,0],[1,1,1,1,1],[1,1,1,1,1]]}',
+  '{"size":5,"colors":["erase","white"],"display":[[0,0,0,0,0],[1,1,1,1,1],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]}',
+  '{"size":5,"colors":["white","erase"],"display":[[0,1,0,0,0],[0,1,0,1,0],[0,0,0,1,0],[1,1,1,1,1],[1,1,1,1,1]]}',
+  '{"size":5,"colors":["white","erase"],"display":[[0,1,0,1,0],[0,1,0,1,0],[0,0,0,0,0],[1,1,1,1,1],[1,1,1,1,1]]}',
+  '{"size":5,"colors":["white","erase"],"display":[[0,0,0,1,1],[1,1,0,1,1],[0,0,0,0,0],[1,1,1,1,1],[1,1,1,1,1]]}',
+  '{"size":5,"colors":["white","erase"],"display":[[0,0,0,1,0],[0,1,0,1,0],[0,1,0,0,0],[1,1,1,1,1],[1,1,1,1,1]]}',
+  '{"size":5,"colors":["white","erase"],"display":[[0,0,0,0,0],[0,1,0,1,0],[0,1,0,0,0],[1,1,1,1,1],[1,1,1,1,1]]}',
+  '{"size":5,"colors":["white","erase"],"display":[[0,0,1,1,1],[0,1,1,1,1],[0,0,0,0,0],[1,1,1,1,1],[1,1,1,1,1]]}',
+  '{"size":5,"colors":["white","erase"],"display":[[0,0,0,0,0],[0,1,0,1,0],[0,0,0,0,0],[1,1,1,1,1],[1,1,1,1,1]]}',
+  '{"size":5,"colors":["white","erase"],"display":[[0,0,0,1,0],[0,1,0,1,0],[0,0,0,0,0],[1,1,1,1,1],[1,1,1,1,1]]}',
+];
 
 export class User {
   constructor(canvas) {
@@ -99,7 +90,6 @@ export class User {
     this.key = [];
     this.angle = 1;
     on('drow', this.drow.bind(this));
-    on('touchuser', this.touchUser.bind(this));
     window.addEventListener('keydown', (e) => {
       if (this.key.includes(e.key)) return;
       this.key.push(e.key);
@@ -114,25 +104,13 @@ export class User {
       if (this.key.length === 0) return;
       for (const k of this.key) {
         switch (k) {
-          case 'ArrowRight':
-            this.x += this.speed;
-            break;
           case 'd':
             this.x += this.speed;
-            break;
-          case 'ArrowLeft':
-            this.x -= this.speed;
             break;
           case 'a':
             this.x -= this.speed;
             break;
-          case 'ArrowUp':
-            this.y -= this.speed;
-            break;
           case 'w':
-            this.y += this.speed;
-            break;
-          case 'ArrowDown':
             this.y += this.speed;
             break;
           case 's':
@@ -154,84 +132,38 @@ export class User {
       1
     );
   }
-  touchUser() {
-    console.log('touch');
+  onTouch(fn) {
+    on('touchuser', fn);
   }
 }
-export class Ball {
-  constructor(canvas, x, y) {
-    this.canvas = canvas;
-    this.ctx = canvas.getContext('2d');
-    this.dotCanvas = new DotCanvas(canvas);
-    this.angle = 0;
-    this.x = x;
-    this.y = y;
-    this.view = views.ball;
-    this.speed = 3;
-    this.delete = false;
-    let d = this.drow.bind(this);
-    this.phase = 0;
-    this.out = false;
-    this.outing = false;
-    this.outTime = 0;
-    on('drow', d);
-    on('move', this.move.bind(this));
-    on('tick', () => {
-      if (this.delete) return;
-      this.onWall();
-      this.isTouchUser();
-      this.out =
-        this.x < 0 ||
-        this.x > window.innerWidth ||
-        this.y < 0 ||
-        this.y > window.innerHeight;
-    });
+
+
+export class Score {
+  constructor(HTMLCanvasElement) {
+    this.value = 9;
+    this.x = innerWidth / 2;
+    this.y = innerHeight / 40;
+    this.dotCanvas = new DotCanvas(HTMLCanvasElement);
+    on('drow', this.write.bind(this));
   }
-  drow() {
-    if (this.delete) return;
-    this.dotCanvas.import(this.view, this.x, this.y * -1 + innerHeight, 5);
+  add() {
+    this.value++;
   }
-  move() {
-    if (this.delete) return;
-    this.x += Math.cos(this.angle) * this.speed;
-    this.y += Math.sin(this.angle) * this.speed;
+
+  minus() {
+    if (this.value > 0) this.value--;
   }
-  honet(x, y) {
-    this.angle = atan(x - this.x, y - this.y);
-    return this;
-  }
-  onWall() {
-    if (
-      this.outing &&
-      0 < this.x &&
-      this.x < innerWidth &&
-      0 < this.y &&
-      this.y < innerHeight
-    ) {
-      this.outing = false;
-      return;
-    }
-    if (this.outing || !this.out) return;
-    this.outTime++;
-    if (this.x > innerWidth) {
-      this.angle =
-        Math.atan((Math.sin(this.angle) / Math.cos(this.angle)) * -1) + Math.PI;
-    } else if (Math.PI / 2 <= this.angle && this.angle <= (Math.PI / 2) * 3) {
-      if (this.x <= 0) {
-        this.angle = Math.atan(
-          (Math.sin(this.angle) / Math.cos(this.angle)) * -1
-        );
-      } else
-        this.angle =
-          Math.atan((Math.sin(this.angle) / Math.cos(this.angle)) * -1) +
-          Math.PI;
-    } else
-      this.angle = Math.atan(
-        (Math.sin(this.angle) / Math.cos(this.angle)) * -1
-      );
-    this.outing = true;
+
+  write() {
+    this.dotCanvas.import(numViews[this.value], this.x, this.y, 10);
+    return;
+    this.value
+      .toString()
+      .split('')
+      .forEach((n, i, thisArr) => {});
   }
 }
+
 export class DotCanvas {
   /**
    * @param {HTMLCanvasElement} canvas ドット絵を表示・作成するcanvasを指定

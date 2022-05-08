@@ -2,10 +2,12 @@ const canvas = document.getElementById('can');
 canvas.height = innerHeight;
 canvas.width = innerWidth;
 const ctx = canvas.getContext('2d');
-import { User, DotCanvas, on, emit, remove, Ball, atan } from './classes.js';
+import { User, DotCanvas, on, emit, remove, atan, Score } from './classes.js';
+import { Bullet } from './bullet.js';
 Number.prototype.in = function (min, max) {
   return min <= this && this <= max;
 };
+const score = new Score(canvas);
 const events = {
   drow: new Event('drow'),
   move: new Event('move'),
@@ -15,10 +17,13 @@ const events = {
 on('drow', () => {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, innerWidth, innerHeight);
+  score.write();
 });
 const user = new User(canvas);
-user.drow();
-class Hound extends Ball {
+user.onTouch(() => {
+  if (score.value > 0) score.minus();
+});
+class Hound extends Bullet {
   constructor(c, x, y, t) {
     super(c, x, y);
     this.type = t;
@@ -80,7 +85,7 @@ class Hound extends Ball {
     return this;
   }
 }
-class Asteroid extends Ball {
+class Asteroid extends Bullet {
   isTouchUser() {
     if (
       this.x.in(user.x - 7, user.x + 7) &&
@@ -104,7 +109,7 @@ class Asteroid extends Ball {
     if (this.out) this.delete = true;
   }
 }
-class Bound extends Ball {
+class Bound extends Bullet {
   isTouchUser() {
     if (
       this.x.in(user.x - 7, user.x + 7) &&
@@ -115,7 +120,7 @@ class Bound extends Ball {
     }
   }
   onWall() {
-    if (this.outTime === 2) this.delete = true;
+    if (this.outTime === 10) this.delete = true;
     super.onWall();
   }
 }
@@ -123,7 +128,9 @@ let balls = [];
 let a = Math.PI / 2 - 0.3;
 let phase = 0;
 let fence;
+let engin_i = 0;
 setInterval(() => {
+  if (score.value === 0) return;
   emit(events.tick);
   emit(events.move);
   emit(events.drow);
@@ -193,15 +200,17 @@ let engins = [
   },
   () => {
     balls = [];
-    balls.push(
-      new Bound(canvas, innerWidth / 2, innerHeight / 2).honet(user.x, user.y)
-    );
+    if (++engin_i % 5 === 0)
+      balls.push(
+        new Bound(canvas, innerWidth / 2, innerHeight / 2).honet(user.x, user.y)
+      );
+    /*
     setTimeout(() => {
       remove('tick', engins[2]);
-    }, 2000);
+    }, 2000);*/
   },
 ];
-on('tick', engins[0]);
+on('tick', engins[2]);
 
 /*
 {
