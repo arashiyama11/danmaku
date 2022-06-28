@@ -80,7 +80,8 @@ const numViews = [
 ];
 
 export class User {
-  constructor(canvas) {
+  constructor(canvas, events) {
+    this.events = events;
     this.x = window.innerWidth / 2;
     this.y = (window.innerHeight * 1.2) / 2;
     this.speed = 5;
@@ -136,7 +137,6 @@ export class User {
     on('touchuser', fn);
   }
 }
-
 
 export class Score {
   constructor(HTMLCanvasElement) {

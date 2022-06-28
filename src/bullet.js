@@ -1,4 +1,4 @@
-import { DotCanvas, on, atan } from './classes.js';
+import { DotCanvas, on, atan,emit } from './classes.js';
 const views = {
   ball: {
     size: 16,
@@ -24,10 +24,12 @@ const views = {
   },
 };
 export class Bullet {
-  constructor(canvas, x, y) {
-    this.canvas = canvas;
-    this.ctx = canvas.getContext('2d');
-    this.dotCanvas = new DotCanvas(canvas);
+  constructor(user, x, y) {
+    this.events = user.events;
+    this.user = user;
+    this.canvas = user.canvas;
+    this.ctx = this.canvas.getContext('2d');
+    this.dotCanvas = new DotCanvas(this.canvas);
     this.angle = 0;
     this.x = x;
     this.y = y;
@@ -51,6 +53,15 @@ export class Bullet {
         this.y < 0 ||
         this.y > window.innerHeight;
     });
+  }
+  isTouchUser() {
+    if (
+      this.x.in(this.user.x - 3, this.user.x + 20) &&
+      this.y.in(this.user.y - 20, this.user.y)
+    ) {
+      emit(this.events.touchuser);
+      this.delete = true;
+    }
   }
   drow() {
     if (this.delete) return;
@@ -99,8 +110,8 @@ export class Bullet {
 }
 
 export class Hound extends Bullet {
-  constructor(c, x, y, t) {
-    super(c, x, y);
+  constructor(u, x, y, events, t) {
+    super(u, x, y, events);
     this.type = t;
     this.view =
       '{"size":16,"colors":["erase","red","grey","black","red","orange","yellow","lime","green","darkgreen","blue","midnightblue","purple"],"display":[[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]}';
@@ -109,12 +120,7 @@ export class Hound extends Bullet {
     if (this.phase == 1) return;
     super.onWall();
   }
-  isTouchUser() {
-    if (this.x.in(user.x - 3, user.x + 20) && this.y.in(user.y - 20, user.y)) {
-      emit(events.touchuser);
-      this.delete = true;
-    }
-  }
+
   honet(x, y) {
     if (this.phase === 0 && this.type === 0) {
       super.honet(
@@ -161,15 +167,6 @@ export class Hound extends Bullet {
   }
 }
 export class Asteroid extends Bullet {
-  isTouchUser() {
-    if (
-      this.x.in(user.x - 7, user.x + 7) &&
-      this.y.in(user.y - 5, user.y + 8)
-    ) {
-      emit(events.touchuser);
-      this.delete = true;
-    }
-  }
   honet(x, y) {
     if (this.phase === 0) {
       //super.honet(innerWidth * Math.random(), y);
@@ -185,15 +182,6 @@ export class Asteroid extends Bullet {
   }
 }
 export class Bound extends Bullet {
-  isTouchUser() {
-    if (
-      this.x.in(user.x - 7, user.x + 7) &&
-      this.y.in(user.y - 5, user.y + 8)
-    ) {
-      emit(events.touchuser);
-      this.delete = true;
-    }
-  }
   onWall() {
     if (this.outTime === 10) this.delete = true;
     super.onWall();
