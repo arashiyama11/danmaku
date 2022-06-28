@@ -2,12 +2,23 @@ const canvas = document.getElementById('can');
 canvas.height = innerHeight;
 canvas.width = innerWidth;
 const ctx = canvas.getContext('2d');
-import { User, DotCanvas, on, emit, remove, atan, Score } from './classes.js';
+import {
+  User,
+  DotCanvas,
+  on,
+  emit,
+  remove,
+  atan,
+  Score,
+  PressSpaceToStart,
+} from './classes.js';
 import { Bullet, Asteroid, Hound, Bound } from './bullet.js';
 Number.prototype.in = function (min, max) {
   return min <= this && this <= max;
 };
-const score = new Score(canvas);
+let isStarted = false;
+let score = new Score(canvas);
+let psts = new PressSpaceToStart(canvas);
 const events = {
   drow: new Event('drow'),
   move: new Event('move'),
@@ -17,24 +28,29 @@ const events = {
 on('drow', () => {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, innerWidth, innerHeight);
-  score.write();
+  if (isStarted) score.write();
 });
-const user = new User(canvas,events);
+const user = new User(canvas, events);
 user.onTouch(() => {
   if (score.value > 0) score.minus();
 });
 
+addEventListener('keydown', ({ key }) => {
+  if (key !== ' ' || isStarted) return;
+  isStarted = true;
+  on('tick', engins[0]);
+  setInterval(() => {
+    if(score.value===0)return
+    emit(events.tick);
+    emit(events.move);
+    emit(events.drow);
+  }, 1000 / 20);
+});
 let balls = [];
 let a = Math.PI / 2 - 0.3;
 let phase = 0;
 let fence;
 let engin_i = 0;
-setInterval(() => {
-  if (score.value === 0) return;
-  emit(events.tick);
-  emit(events.move);
-  emit(events.drow);
-}, 1000 / 20);
 let x = 0;
 let engins = [
   () => {
@@ -71,10 +87,7 @@ let engins = [
     let ins = new Asteroid(user, innerWidth / 2, 0).honet(0, innerHeight);
     ins.speed = 15;
     fence.push(ins);
-    ins = new Asteroid(user, innerWidth / 2, 0).honet(
-      innerWidth,
-      innerHeight
-    );
+    ins = new Asteroid(user, innerWidth / 2, 0).honet(innerWidth, innerHeight);
     ins.speed = 15;
     fence.push(ins);
     if (phase === 0) {
@@ -110,73 +123,3 @@ let engins = [
     }, 2000);*/
   },
 ];
-on('tick', engins[2]);
-
-/*
-{
-  let b = 0;
-  let c = 0;
-  let d = 0;
-  let b2 = 0;
-  let c2 = innerWidth;
-  let d2 = 0;
-  setInterval(() => {
-    if (d % 2 === 0) {
-      c += 10;
-    } else {
-      c -= 10;
-    }
-    if (c > innerWidth || c < 0) d++;
-    if (++b % 5 === 0)
-      balls.push(new Asteroid(canvas, innerWidth, 0).honet(c, innerHeight));
-    if (d2 % 2 === 0) {
-      c2 += 10;
-    } else {
-      c2 -= 10;
-    }
-    if (c2 > innerWidth || c2 < 0) d2++;
-    if (++b2 % 5 === 0)
-      balls.push(new Asteroid(canvas, 0, 0).honet(c2, innerHeight));
-    emit(events.drow);
-    emit(events.move);
-    for (let i = 0; i < balls.length; i++) {
-      let ball = balls[i];
-      if (ball.outTime === 1) ball.delete = true;
-      if (ball.delete) {
-        balls[i] = undefined;
-        balls = balls.filter((v) => v != undefined);
-      }
-    }
-  }, 1000 / 20);
-}
-/*
-setInterval(() => {
-  if (++a % 2 === 0 && balls.length < 100){
-    if(Math.random()<0.5){
-      balls.push(
-        new Haund(
-          canvas,
-          Math.random() < 0.5 ? 10 : innerWidth - 10,
-          0,
-          //Math.round(Math.random())
-          0
-        )
-      );
-    }else{
-      balls.push(new Asteroid(canvas,innerWidth/2,1))
-    }
-  }
-    
-  a = a % 2;
-  for (let i = 0; i < balls.length; i++) {
-    let ball = balls[i];
-    ball.honet(user.x, user.y);
-    ball.move();
-    if (ball.delete) {
-      balls[i] = undefined;
-      balls = balls.filter((v) => v != undefined);
-    }
-  }
-  emit('drow');
-}, 1000 / 30);
-*/
