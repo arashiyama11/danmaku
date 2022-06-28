@@ -1,4 +1,4 @@
-import { DotCanvas, on, atan,emit } from './classes.js';
+import { DotCanvas, on, atan, emit } from './classes.js';
 const views = {
   ball: {
     size: 16,
@@ -56,8 +56,8 @@ export class Bullet {
   }
   isTouchUser() {
     if (
-      this.x.in(this.user.x - 3, this.user.x + 20) &&
-      this.y.in(this.user.y - 20, this.user.y)
+      this.x.in(this.user.x - 7, this.user.x + 7) &&
+      this.y.in(this.user.y - 7, this.user.y + 7)
     ) {
       emit(this.events.touchuser);
       this.delete = true;

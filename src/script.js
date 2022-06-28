@@ -18,7 +18,7 @@ Number.prototype.in = function (min, max) {
 };
 let isStarted = false;
 let score = new Score(canvas);
-let psts = new PressSpaceToStart(canvas);
+new PressSpaceToStart(canvas);
 const events = {
   drow: new Event('drow'),
   move: new Event('move'),
@@ -40,12 +40,13 @@ addEventListener('keydown', ({ key }) => {
   isStarted = true;
   on('tick', engins[0]);
   setInterval(() => {
-    if(score.value===0)return
+    if (score.value === 0) return;
     emit(events.tick);
     emit(events.move);
     emit(events.drow);
   }, 1000 / 20);
 });
+
 let balls = [];
 let a = Math.PI / 2 - 0.3;
 let phase = 0;
@@ -117,9 +118,10 @@ let engins = [
       balls.push(
         new Bound(user, innerWidth / 2, innerHeight / 2).honet(user.x, user.y)
       );
-    /*
+
     setTimeout(() => {
       remove('tick', engins[2]);
-    }, 2000);*/
+      on('tick', engins[0]);
+    }, 2000);
   },
 ];
